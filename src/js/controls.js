@@ -418,7 +418,7 @@ const controls = {
                     return;
                 }
 
-                const isRadioButton = matches(menuItem, '[role="menuitemradio"]');
+                const isRadioButton = matches(menuItem, '[role="menuitemradio"]', this.elements.container);
 
                 // Show the respective menu
                 if (!isRadioButton && [32, 39].includes(event.which)) {
@@ -462,6 +462,8 @@ const controls = {
     // Create a settings menu item
     createMenuItem({ value, list, type, title, badge = null, checked = false }) {
         const attributes = getAttributesFromSelector(this.config.selectors.inputs[type]);
+        // save container reference for node matches below
+        const container = this.elements.container;
 
         const menuItem = createElement(
             'button',
@@ -495,7 +497,7 @@ const controls = {
                 // Ensure exclusivity
                 if (check) {
                     Array.from(menuItem.parentNode.children)
-                        .filter(node => matches(node, '[role="menuitemradio"]'))
+                        .filter(node => matches(node, '[role="menuitemradio"]', container))
                         .forEach(node => node.setAttribute('aria-checked', 'false'));
                 }
 
@@ -661,7 +663,7 @@ const controls = {
         }
 
         // Set aria values for https://github.com/sampotts/plyr/issues/905
-        if (matches(range, this.config.selectors.inputs.seek)) {
+        if (matches(range, this.config.selectors.inputs.seek, this.elements.container)) {
             range.setAttribute('aria-valuenow', this.currentTime);
             const currentTime = controls.formatTime(this.currentTime);
             const duration = controls.formatTime(this.duration);
@@ -670,7 +672,7 @@ const controls = {
                 'aria-valuetext',
                 format.replace('{currentTime}', currentTime).replace('{duration}', duration),
             );
-        } else if (matches(range, this.config.selectors.inputs.volume)) {
+        } else if (matches(range, this.config.selectors.inputs.volume, this.elements.container)) {
             const percent = range.value * 100;
             range.setAttribute('aria-valuenow', percent);
             range.setAttribute('aria-valuetext', `${percent.toFixed(1)}%`);

@@ -220,11 +220,13 @@ export function hasClass(element, className) {
 }
 
 // Element matches selector
-export function matches(element, selector) {
+// For ShadowDom support, the container element should be passed as document.querySelector
+// will not work.
+export function matches(element, selector, container=document) {
     const prototype = { Element };
 
     function match() {
-        return Array.from(document.querySelectorAll(selector)).includes(this);
+        return Array.from(container.querySelectorAll(selector)).includes(this);
     }
 
     const method =
